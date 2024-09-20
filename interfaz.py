@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, scrolledtext, messagebox
 import threading
 from modexFB import SocialNetwork, Agent, modexFB
+from modexPD import modex_dp
 
 class AplicacionProcesadorTexto:
     def __init__(self, master):
@@ -85,7 +86,7 @@ class AplicacionProcesadorTexto:
             r_max = int(entrada[-1])
 
             network = SocialNetwork(agents, r_max)
-            best_strategy, best_effort, best_extremism = modexFB(network)
+            best_strategy, best_effort, best_extremism = modex_dp(network)
 
             resultado = f"Ext {best_extremism:.6f}\n"
             resultado += f"Esf {best_effort}\n"
