@@ -1,15 +1,8 @@
 from typing import List, Tuple
 import math
 
-class Agent:
-    def __init__(self, opinion: int, receptivity: float):
-        self.opinion = opinion
-        self.receptivity = receptivity
+from core import SocialNetwork, Agent
 
-class SocialNetwork:
-    def __init__(self, agents: List[Agent], r_max: int):
-        self.agents = agents
-        self.r_max = r_max
 
 def calculate_extremism(opinions: List[int]) -> float:
     return math.sqrt(sum(opinion**2 for opinion in opinions)) / len(opinions)
@@ -52,7 +45,7 @@ agent2 = Agent(opinion=40, receptivity=0.1)
 agent3 = Agent(opinion=50, receptivity=0.5)
 network = SocialNetwork(agents=[agent1, agent2, agent3], r_max=35)
 
-best_strategy, best_effort, best_extremism = modex_dp(network)
+best_strategy, best_effort, best_extremism = modexPD(network)
 print(f"Best strategy: {best_strategy}")
 print(f"Best effort: {best_effort}")
 print(f"Best extremism: {best_extremism:.4f}")

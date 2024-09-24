@@ -1,32 +1,9 @@
-from typing import List, Tuple
 import math
 import itertools
 
+from core import *
 
-class Agent:
-    def __init__(self, opinion: int, receptivity: float):
-        self.opinion = opinion
-        self.receptivity = receptivity
 
-class SocialNetwork:
-    def __init__(self, agents: List[Agent], r_max: int):
-        self.agents = agents
-        self.r_max = r_max
-        
-
-def calculate_extremism(rs: SocialNetwork) -> float:
-    opinions = [agent.opinion**2 for agent in rs.agents]
-    return math.sqrt(sum(opinions)) / len(rs.agents)
-
-def apply_strategy(rs: SocialNetwork, strategy) -> SocialNetwork:
-    agents = [ 
-        Agent(0 if moderation else agent.opinion, agent.receptivity) 
-        for agent, moderation in zip(rs.agents, strategy)
-    ]
-    
-    return SocialNetwork(agents, rs.r_max)
-    
-    
 def calculate_effort(rs: SocialNetwork, strategy) -> int:
     total_effort = 0
     
@@ -38,7 +15,6 @@ def calculate_effort(rs: SocialNetwork, strategy) -> int:
             
     return total_effort
     
-
 
 agent1 = Agent(opinion=-30, receptivity=0.9)
 agent2 = Agent(opinion=40, receptivity=0.1)
