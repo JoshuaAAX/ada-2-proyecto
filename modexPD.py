@@ -17,7 +17,7 @@ def calculate_extremism(opinions: List[int]) -> float:
 def calculate_effort(agent: Agent, moderate: bool) -> int:
     return math.ceil(abs(agent.opinion) * (1 - agent.receptivity)) if moderate else 0
 
-def modex_dp(rs: SocialNetwork) -> Tuple[List[int], int, float]:
+def modexPD(rs: SocialNetwork) -> Tuple[List[int], int, float]:
     n = len(rs.agents)
     dp = [[[float('inf'), None] for _ in range(rs.r_max + 1)] for _ in range(n + 1)]
     
