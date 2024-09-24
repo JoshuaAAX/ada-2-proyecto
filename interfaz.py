@@ -1,11 +1,18 @@
 import tkinter as tk
 from tkinter import filedialog, scrolledtext, messagebox
 import threading
-from modexFB import SocialNetwork, Agent, modexFB
-from modexPD import modex_dp
+
+from modexFB import modexFB
+from modexPD import modexPD
+from modexV import modexV
+
+from core import *
+
 
 class AplicacionProcesadorTexto:
     def __init__(self, master):
+        self.selected_algorithm_index = 0
+
         self.master = master
         master.title("Moderador de extremismo de opiniones en una red")
         master.geometry("1200x600")
@@ -14,9 +21,15 @@ class AplicacionProcesadorTexto:
         marco_izquierdo = tk.Frame(master, width=200, height=600, bd=2, relief=tk.GROOVE)
         marco_izquierdo.pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=10)
 
-        tk.Label(marco_izquierdo, text="fuerza bruta").pack()
-        tk.Label(marco_izquierdo, text="Voraz").pack()
-        tk.Label(marco_izquierdo, text="dinamico").pack()
+        # Botones para selección de algoritmos
+        self.boton_fb = tk.Button(marco_izquierdo, text="Fuerza Bruta", command=lambda: self.seleccionar_algoritmo(0))
+        self.boton_fb.pack(pady=5, fill=tk.X)
+        
+        self.boton_voraz = tk.Button(marco_izquierdo, text="Voraz", command=lambda: self.seleccionar_algoritmo(1))
+        self.boton_voraz.pack(pady=5, fill=tk.X)
+        
+        self.boton_dinamico = tk.Button(marco_izquierdo, text="Dinámico", command=lambda: self.seleccionar_algoritmo(2))
+        self.boton_dinamico.pack(pady=5, fill=tk.X)
 
         # Marco central
         marco_central = tk.Frame(master, width=500, height=600, bd=2, relief=tk.GROOVE)
@@ -59,7 +72,8 @@ class AplicacionProcesadorTexto:
         tk.Label(frame_botones, text="tiempo").pack(side=tk.LEFT)
         tk.Entry(frame_botones, width=10).pack(side=tk.LEFT, padx=5)
 
-        tk.Button(frame_botones, text="Download").pack(side=tk.LEFT, padx=5)
+        # Botón para descargar el archivo
+        tk.Button(frame_botones, text="Download", command=self.descargar_archivo).pack(side=tk.LEFT, padx=5)
 
     def subir_archivo(self):
         ruta_archivo = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt")])
@@ -75,6 +89,24 @@ class AplicacionProcesadorTexto:
         self.area_resultados.insert(tk.END, "Procesando...\n")
         threading.Thread(target=self._procesar_red_thread).start()
 
+    def seleccionar_algoritmo(self, index):
+        self.selected_algorithm_index = index
+        # Resetear colores de los botones
+        self.boton_fb.config(bg="lightgray")
+        self.boton_voraz.config(bg="lightgray")
+        self.boton_dinamico.config(bg="lightgray")
+
+        # Resaltar el botón seleccionado
+        if index == 0:
+            self.boton_fb.config(bg="lightblue")
+        elif index == 1:
+            self.boton_voraz.config(bg="lightblue")
+        elif index == 2:
+            self.boton_dinamico.config(bg="lightblue")
+
+    def obtener_algoritmo_seleccionado(self):
+        return [modexFB, modexV, modexPD][self.selected_algorithm_index]
+
     def _procesar_red_thread(self):
         try:
             entrada = self.area_archivo.get(1.0, tk.END).strip().split('\n')
@@ -86,11 +118,15 @@ class AplicacionProcesadorTexto:
             r_max = int(entrada[-1])
 
             network = SocialNetwork(agents, r_max)
-            best_strategy, best_effort, best_extremism = modex_dp(network)
+            selected_algorithm = self.obtener_algoritmo_seleccionado()
+            best_strategy, best_effort, best_extremism = selected_algorithm(network)
 
             resultado = f"Ext {best_extremism:.6f}\n"
             resultado += f"Esf {best_effort}\n"
             resultado += ' '.join(map(str, best_strategy))
+
+            # Almacenar resultado para descargar
+            self.resultado_actual = resultado
 
             self.master.after(0, self._actualizar_resultados, resultado)
         except Exception as e:
@@ -104,6 +140,19 @@ class AplicacionProcesadorTexto:
     def _mostrar_error(self, mensaje):
         messagebox.showerror("Error", f"Ha ocurrido un error: {mensaje}")
         self.boton_procesar.config(state=tk.NORMAL)
+
+    def descargar_archivo(self):
+        # Obtener la ruta para guardar el archivo
+        ruta_guardar = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Archivo de texto", "*.txt")])
+        if ruta_guardar:
+            try:
+                # Guardar el contenido de resultados en el archivo seleccionado
+                with open(ruta_guardar, 'w') as archivo:
+                    archivo.write(self.resultado_actual)
+                messagebox.showinfo("Éxito", "El archivo se ha descargado correctamente.")
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo guardar el archivo: {str(e)}")
+
 
 root = tk.Tk()
 app = AplicacionProcesadorTexto(root)
