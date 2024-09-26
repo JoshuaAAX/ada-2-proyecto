@@ -16,6 +16,17 @@ def calculate_extremism(rs: SocialNetwork) -> float:
     opinions = [agent.opinion**2 for agent in rs.agents]
     return math.sqrt(sum(opinions)) / len(rs.agents)
 
+def calculate_effort(rs: SocialNetwork, strategy) -> int:
+    total_effort = 0
+    
+    for i, mod in enumerate(strategy):
+        if mod == 1:
+            agent = rs.agents[i]
+            effort = math.ceil(abs(agent.opinion) * (1 - agent.receptivity))
+            total_effort += effort
+            
+    return total_effort
+
 def apply_strategy(rs: SocialNetwork, strategy) -> SocialNetwork:
     agents = [ 
         Agent(0 if moderation else agent.opinion, agent.receptivity) 

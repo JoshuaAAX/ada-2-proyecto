@@ -3,19 +3,6 @@ import itertools
 
 from core import *
 
-
-def calculate_effort(rs: SocialNetwork, strategy) -> int:
-    total_effort = 0
-    
-    for i, mod in enumerate(strategy):
-        if mod == 1:
-            agent = rs.agents[i]
-            effort = math.ceil(abs(agent.opinion) * (1 - agent.receptivity))
-            total_effort += effort
-            
-    return total_effort
-    
-
 agent1 = Agent(opinion=-30, receptivity=0.9)
 agent2 = Agent(opinion=40, receptivity=0.1)
 agent3 = Agent(opinion=50, receptivity=0.5)
