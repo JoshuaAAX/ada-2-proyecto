@@ -73,7 +73,7 @@ class AplicacionProcesadorTexto:
         tk.Entry(frame_botones, width=10).pack(side=tk.LEFT, padx=5)
 
         # Botón para descargar el archivo
-        tk.Button(frame_botones, text="Download", command=self.descargar_archivo).pack(side=tk.LEFT, padx=5)
+        tk.Button(frame_botones, text="Descargar", command=self.descargar_archivo).pack(side=tk.LEFT, padx=5)
 
     def subir_archivo(self):
         ruta_archivo = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt")])
@@ -121,9 +121,9 @@ class AplicacionProcesadorTexto:
             selected_algorithm = self.obtener_algoritmo_seleccionado()
             best_strategy, best_effort, best_extremism = selected_algorithm(network)
 
-            resultado = f"Ext {best_extremism:.6f}\n"
-            resultado += f"Esf {best_effort}\n"
-            resultado += ' '.join(map(str, best_strategy))
+            resultado = f"{best_extremism:.6f}\n"
+            resultado += f"{best_effort}\n"
+            resultado += '\n'.join(map(str, best_strategy))
 
             # Almacenar resultado para descargar
             self.resultado_actual = resultado
